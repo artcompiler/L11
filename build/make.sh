@@ -51,6 +51,6 @@ $BIN/shell $BIN/l0c.swf \
        $DIR/json.l0 \
        $DIR/visit.l0 \
        $DIR/transform.l0 \
-       $DIR/l9c.l0
+       $DIR/l11c.l0
 
-cp ../src/l9c.l0.swf ../bin/l9c.swf
+cp ../src/l11c.l0.swf ../bin/l11c.swf

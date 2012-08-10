@@ -1,9 +1,9 @@
 OVERVIEW
 
-L9 is a language of translating JavaScript ASTs (e.g. L7) into SVG ASTs with
-pretty printing semantics. 
+L11 is a language of analyzing JavaScript ASTs (e.g. L7) to provide static information
+about relationships between nodes.
 
-L9 is written in L0. 
+L11 is written in L0. 
 
 BUILDING
 
@@ -14,7 +14,7 @@ To build:
 
 This produces the file:
 
-   ../bin/l9c.swf
+   ../bin/l11c.swf
 
 
 USING
@@ -25,11 +25,11 @@ To run:
 
 or
 
-    avmshell ../bin/l9c.swf some.js.l7
+    avmshell ../bin/l11c.swf some.js.l7
 
 where avmshell is the name of a recent build of Tamarin.
 
 This produces the file:
 
-    some.js.l7.l9
+    some.js.l7.l11
 
