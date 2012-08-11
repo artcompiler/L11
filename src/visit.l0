@@ -36,15 +36,18 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+use namespace Parse
+
 class Visitor {
 
     // table is a map from tag names to visitor methods
     var table;
 
     function Visitor(table="empty") 
-        : table = table { }
+        : table = table { 
+    }
 
-    public function visit(node) {
+    public function visit(cx, node) {
 
         if (isString(node)) {
             return node
@@ -57,7 +60,7 @@ class Visitor {
         if (isArray(node)) {
             let elts = [ ]
             for (let i = 0; i < node.length; i++) {
-                elts.push(visit(node[i]))
+                elts.push(visit(cx, node[i]))
             }
             return elts
         }
@@ -66,7 +69,7 @@ class Visitor {
             //print("visit() node.tag="+node.tag)
 
             if (node.tag && isFunction(table[node.tag])) {
-                return table[node.tag](node)
+                return table[node.tag](cx, node)
             }
             else {
                 throw "missing visitor method for " + node.tag                

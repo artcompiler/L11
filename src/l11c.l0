@@ -62,13 +62,12 @@
         let json = new Ast::JSON("("+str+")");
         let jsast = json.toValue();
 
-        // Translate AST from JS.AST to SVG.AST
-        let transformer = new Transformer(jsast)
-        let svgast = transformer.transform()
-
+        // Translate AST from JS.AST to JS.AST with semantics
+        let analyzer = new Analyzer(jsast)
+        let jsast = analyzer.analyze()
 
         // Render JSON
-        let str = json.toString(svgast);
+        let str = json.toString(jsast);
 
         //print(str)
 

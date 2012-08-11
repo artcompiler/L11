@@ -131,7 +131,7 @@ class Fixture extends ASTNode implements Serializable {
     function Fixture(name, data) : name=name, data=data {}
 
     function serialize(s)
-        s.sClass(this, "Fixture", "name", "data");
+        s.sClass(this, "Fixture", "name" /*, "data"*/);
 }
 
 interface FixtureName {
@@ -242,25 +242,25 @@ function nsEquals(ns1, ns2) {
     }
 }
 
-// class PrivateNamespace extends ASTNode implements Ast::Namespace, Serializable {
-//     const name : IDENT;
-//     function PrivateNamespace (name)
-//         : name = name { }
-//     function hash () { return "private " + name; }
+class PrivateNamespace extends ASTNode implements Ast::Namespace, Serializable {
+    const name : IDENT;
+    function PrivateNamespace (name)
+        : name = name { }
+    function hash () { return "private " + name; }
 
-//     function serialize(s)
-//         s.sClass(this, "PrivateNamespace", "name");
-// }
+    function serialize(s)
+        s.sClass(this, "PrivateNamespace", "name");
+}
 
-// class ProtectedNamespace extends ASTNode implements Ast::Namespace, Serializable {
-//     const name : IDENT;
-//     function ProtectedNamespace (name)
-//         : name = name { }
-//     function hash () { return "protected " + name; }
+class ProtectedNamespace extends ASTNode implements Ast::Namespace, Serializable {
+    const name : IDENT;
+    function ProtectedNamespace (name)
+        : name = name { }
+    function hash () { return "protected " + name; }
 
-//     function serialize(s)
-//         s.sClass(this, "ProtectedNamespace", "name");
-// }
+    function serialize(s)
+        s.sClass(this, "ProtectedNamespace", "name");
+}
 
 class PublicNamespace extends ASTNode implements Ast::Namespace, Serializable {
     const name : IDENT;
@@ -272,35 +272,35 @@ class PublicNamespace extends ASTNode implements Ast::Namespace, Serializable {
         "" //s.sClass(this, "PublicNamespace", "name");
 }
 
-// class InternalNamespace extends ASTNode implements Ast::Namespace, Serializable {
-//     const name : IDENT;
-//     function InternalNamespace (name)
-//         : name = name { }
-//     function hash () { return "internal " + name; }
+class InternalNamespace extends ASTNode implements Ast::Namespace, Serializable {
+    const name : IDENT;
+    function InternalNamespace (name)
+        : name = name { }
+    function hash () { return "internal " + name; }
 
-//     function serialize(s)
-//         s.sClass(this, "InternalNamespace", "name");
-// }
+    function serialize(s)
+        s.sClass(this, "InternalNamespace", "name");
+}
 
-// class ForgeableNamespace extends ASTNode implements Ast::Namespace, Serializable {
-//     const name : IDENT;
-//     function ForgeableNamespace (name)
-//         : name = name { }
-//     function hash () { return "forgeable " + name; }
+class ForgeableNamespace extends ASTNode implements Ast::Namespace, Serializable {
+    const name : IDENT;
+    function ForgeableNamespace (name)
+        : name = name { }
+    function hash () { return "forgeable " + name; }
 
-//     function serialize(s)
-//         s.sClass(this, "ForgeableNamespace", "name");
-// }
+    function serialize(s)
+        s.sClass(this, "ForgeableNamespace", "name");
+}
 
-// class UnforgeableNamespace extends ASTNode implements Ast::Namespace, Serializable {
-//     const name : IDENT;
-//     function UnforgeableNamespace (name)
-//         : name = name { }
-//     function hash () { return "unforgeable " + name; }
+class UnforgeableNamespace extends ASTNode implements Ast::Namespace, Serializable {
+    const name : IDENT;
+    function UnforgeableNamespace (name)
+        : name = name { }
+    function hash () { return "unforgeable " + name; }
 
-//     function serialize(s)
-//         s.sClass(this, "UnforgeableNamespace", "name");
-// }
+    function serialize(s)
+        s.sClass(this, "UnforgeableNamespace", "name");
+}
 
 internal var nshash = 0;  // Used as an object ID for namespace nodes in the back end
 
@@ -311,7 +311,7 @@ final class NamespaceSet extends ASTNode implements Serializable {
     const ns;
     const link: NamespaceSet;
     const hash = nshash++;
-    function NamespaceSet(ns, link) : ns=ns, link=link {}
+    function NamespaceSet(ns, link=null) : ns=ns, link=link {}
 
     function serialize(s)
         s.sClass(this, "NamespaceSet", "ns", "link");
@@ -2267,7 +2267,7 @@ class Serializer {
     public var pool;
     public function Serializer(compact=false) : compact=compact {
 //        print("new Serializer")
-        pool = new ExprPool();
+//        pool = new ExprPool();
     }
 
     public function serialize(obj) {
@@ -2286,7 +2286,7 @@ class Serializer {
         if (obj is Token::Tok)
             return '"' + obj + '"';
 
-        throw new Error("Unserializable datum " + obj.constructor);
+        throw new Error("Unserializable datum " + obj.constructor + " " + obj.tag);
         return "[[" + obj + "]]";
     }
 

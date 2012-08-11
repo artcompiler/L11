@@ -200,8 +200,10 @@ final class Definer
     function addInits(initType, inits, isStatic=false): void
         Util::pushOnto(findHead(initType, isStatic).exprs, inits);
 
-    function addFixture(initType, name, fixture, isStatic=false): void
-        findHead(initType, isStatic).fixtures.push(new Ast::Fixture(name,fixture));
+    function addFixture(initType, name, fixture, isStatic=false): void {
+        print("addFixture() name="+name)
+        return findHead(initType, isStatic).fixtures.push(new Ast::Fixture(name,fixture));
+    }
 
     private function findHead(initType, isStatic) {
         if (initType == Ast::letInit)
@@ -317,7 +319,7 @@ final class Definer
         Parse::internalError(this, "resolveIdentExpr: case not implemented " + ident);
     }
 
-    private function findFixtureWithIdentifier (id: Ast::IDENT, it: ? Ast::INIT_TARGET) {
+    function findFixtureWithIdentifier (id: Ast::IDENT, it: ? Ast::INIT_TARGET) {
         for ( let nssl = getOpenNamespaces() ; nssl != null ; nssl = nssl.link ) {
             let fx = findFixtureWithNames(id, nssl.nsset, it);
             if (fx != null) 
@@ -326,7 +328,7 @@ final class Definer
         return null;
     }
 
-    private function findFixtureWithNames (id, nss, it: ? Ast::INIT_TARGET) {
+    function findFixtureWithNames (id, nss, it: ? Ast::INIT_TARGET) {
         let env = this.env;
 
         if (it == Ast::instanceInit) {
@@ -402,21 +404,21 @@ final class Definer
     // Avoids allocation.
     private var name_helper = { id: null, ns: null };
 
-    private function hasName (head, id, ns) {
+    private function hasName (head, ident, ns) {
         let cache = getCache(head);
 
         // For small rib sets we just search sequentially
         if (cache == null) {
             let fxtrs = head.fixtures;
             for ( let i=0, limit=fxtrs.length ; i < limit ; i++ ) {
-                let pn = fxtrs[i].name;
-                if (pn.name.id == id && Ast::nsEquals(pn.name.ns, ns))
+                let name = fxtrs[i].name;
+                if (name.ident == ident && Ast::nsEquals(name.ns, ns))
                     return true;
             }
             return false;
         }
 
-        name_helper.id = id;
+        name_helper.id = ident;
         name_helper.ns = ns;
         return cache.table.read(name_helper) != null;
     }
@@ -425,11 +427,11 @@ final class Definer
     // doesn't and (b) this method accounts for almost none of the
     // running time at present.
 
-    private function getFixture (head, id, ns) {
+    private function getFixture (head, ident, ns) {
         let fxtrs = head.fixtures;
         for ( let i=0, limit=fxtrs.length ; i < limit ; i++ ) {
-            let pn = fxtrs[i].name;
-            if (pn.name.id == id && Ast::nsEquals(pn.name.ns, ns))
+            let name = fxtrs[i].name;
+            if (name.ident == ident && Ast::nsEquals(name.ns, ns))
                 return fxtrs[i];
         }
         Parse::internalError(this, "Name not found " + ns + "::" + id );
