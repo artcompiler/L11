@@ -395,8 +395,8 @@ final class Definer
 
     private function extendTable(cache, fxtrs) {
         for ( let i=cache.length, limit=fxtrs.length ; i < limit ; i++ ) {
-            let pn = fxtrs[i].name;
-            cache.table.write({id: pn.name.id, ns: pn.name.ns}, fxtrs[i]);
+            let name = fxtrs[i].name;
+            cache.table.write({id: name.ident, ns: name.ns}, fxtrs[i]);
         }
         cache.length = fxtrs.length;
     }
@@ -404,8 +404,9 @@ final class Definer
     // Avoids allocation.
     private var name_helper = { id: null, ns: null };
 
+    // FIXME re-install cache
     private function hasName (head, ident, ns) {
-        let cache = getCache(head);
+        let cache = null //getCache(head);
 
         // For small rib sets we just search sequentially
         if (cache == null) {

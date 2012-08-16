@@ -156,7 +156,7 @@ class Analyzer extends Visitor {
 
     function returnStmt(cx, node) {
         print("returnStmt")
-        elts.push(visit(cx, node.expr))
+        visit(cx, node.expr)
         return node
     }
 
@@ -792,34 +792,16 @@ class Analyzer extends Visitor {
 
     function setExpr(cx, node) {
         print("setExpr")
-        let startCol = col
-        let startLn = ln
-        let elts = [ ]
-        elts.push(visit(cx, node.le))
-        col += 1
-        elts.push({
-            "tag": "tspan",
-            "class": "punc",
-            "id": node.id,
-            "startCol": col,
-            "startLn": ln,
-            "stopCol": col,
-            "stopLn": ln,
-            "elts": ["="]
-        })
-        col += ("= ").length
-        elts.push(visit(cx, node.re))
-        return node
-        return { 
-            "tag": "tspan",
-            "class": "SetExpr",
-            "id": node.id,
-            "startCol": startCol,
-            "startLn": startLn,
-            "stopCol": col,
-            "stopLn": ln,
-            "elts": elts
+        let fx = cx.findFixtureWithNames(node.le.ident, new Ast::NamespaceSet(Ast::publicNS), null)
+        // point to the fixture and fixture to here
+        if (fx) {
+            node.write = [fx.data.id]
+            if (fx.data.defs === void 0) {
+                fx.data.defs = [ ]
+            }
+            fx.data.defs.push(node.id)
         }
+        return node
     }
 
     function forInBindingStmt(cx, node) {
@@ -918,11 +900,12 @@ class Analyzer extends Visitor {
         print("initBinding")
         let fx = cx.findFixtureWithNames(node.name.ident, new Ast::NamespaceSet(Ast::publicNS), null)
         // point to the fixture and fixture to here
-        node.defs = [fx.data.id]
+        node.write = [fx.data.id]
         if (fx.data.defs === void 0) {
             fx.data.defs = [ ]
         }
         fx.data.defs.push(node.id)
+        visit(cx, node.expr)
         return node
     }
 
@@ -1031,7 +1014,7 @@ class Analyzer extends Visitor {
     function fixture(cx, node) {
         print("fixture")
         cx.addFixture(Ast::varInit, new Ast::Name(Ast::publicNS, node.name.ident, null), node, false);
-        //elts.push(visit(cx, node.name))
+        visit(cx, node.data)
         return node
     }
 
@@ -1247,6 +1230,7 @@ class Analyzer extends Visitor {
 
     function func(cx, node) {
         print("func")
+        cx.enterFunction({})
         let startCol = col
         let startLn = ln
         let elts = [ ]
@@ -1321,17 +1305,8 @@ class Analyzer extends Visitor {
             "elts": ["}"]
         })
         col += 1
+        cx.exitFunction()
         return node
-        return {
-            "tag": "tspan",
-            "class": "Func",
-            "id": node.id,
-            "startCol": startCol,
-            "startLn": startLn,
-            "stopCol": col,
-            "stopLn": ln,
-            "elts": elts
-        }
     }
 
     function funcName(cx, node) {
@@ -1364,17 +1339,16 @@ class Analyzer extends Visitor {
 
     function identifier(cx, node) {
         print("identifier")
-        return node
-        return {
-            "tag": "tspan",
-            "class": "Identifier",
-            "id": node.id,
-            "startCol": col,
-            "startLn": ln,
-            "stopCol": col += node.ident.length,
-            "stopLn": ln,
-            "elts": [node.ident]
+        let fx = cx.findFixtureWithNames(node.ident, new Ast::NamespaceSet(Ast::publicNS), null)
+        // point to the fixture and fixture to here
+        if (fx) {
+            node.read = [fx.data.id]
+            if (fx.data.uses === void 0) {
+                fx.data.uses = [ ]
+            }
+            fx.data.uses.push(node.id)
         }
+        return node
     }
 
     function literalString(cx, node) {
@@ -2000,7 +1974,7 @@ class Analyzer extends Visitor {
             "startLn": ln,
             "stopCol": col,
             "stopLn": ln,
-            "elts": [binaryOpText(cx, node.op)]
+            "elts": [binaryOpText(node.op)]
         })
         if (cx, node.op == Ast::logicalAndOp ||
             node.op == Ast::logicalOrOp ||
@@ -2009,7 +1983,7 @@ class Analyzer extends Visitor {
             col = tempCol
         }
         else {
-            col += binaryOpText(cx, node.op).length + 1   // space after operator
+            col += binaryOpText(node.op).length + 1   // space after operator
         }
         elts.push(visit(cx, node.e2))
         return node
@@ -2094,9 +2068,9 @@ class Analyzer extends Visitor {
                     "startLn": ln,
                     "stopCol": col,
                     "stopLn": ln,
-                    "elts": [unaryOpText(cx, node.op)]
+                    "elts": [unaryOpText(node.op)]
                 })
-                col += unaryOpText(cx, node.op).length
+                col += unaryOpText(node.op).length
                 if (cx, node.op == Ast::deleteOp ||
                     node.op == Ast::voidOp ||
                     node.op == Ast::typeOfOp) {
@@ -2114,9 +2088,9 @@ class Analyzer extends Visitor {
                     "startLn": ln,
                     "stopCol": col,
                     "stopLn": ln,
-                    "elts": [unaryOpText(cx, node.op)]
+                    "elts": [unaryOpText(node.op)]
                 })
-                col += unaryOpText(cx, node.op).length
+                col += unaryOpText(node.op).length
             }
         }
         return node
@@ -2134,62 +2108,14 @@ class Analyzer extends Visitor {
 
     function objectRef(cx, node) {
         print("objectRef")
-        let startCol = col
-        let startLn = ln
-        let elts = [ ]
-        //let tempCol = col 
-        elts.push(visit(cx, node.base))
-        //col = tempCol
+        visit(cx, node.base)
         if (cx, node.ident.tag==="ComputedName") {
-            elts.push({
-                "tag": "tspan",
-                "class": "punc",
-                "id": node.id,
-                "startCol": col,
-                "startLn": ln,
-                "stopCol": col,
-                "stopLn": ln,
-                "elts": ["["]
-            })
-            col += "[".length
-            elts.push(visit(cx, node.ident))
-            elts.push({
-                "tag": "tspan",
-                "class": "punc",
-                "id": node.id,
-                "startCol": col,
-                "startLn": ln,
-                "stopCol": col,
-                "stopLn": ln,
-                "elts": ["]"]
-            })
-            col += "]".length
+            visit(cx, node.ident)
         }
         else {
-            elts.push({
-                "tag": "tspan",
-                "class": "punc",
-                "id": node.id,
-                "startCol": col,
-                "startLn": ln,
-                "stopCol": col,
-                "stopLn": ln,
-                "elts": ["."]
-            })
-            col += ".".length
-            elts.push(visit(cx, node.ident))
+            visit(cx, node.ident)
         }
         return node
-        return {
-            "tag": "tspan",
-            "class": "objectRef",
-            "id": node.id,
-            "startCol": startCol,
-            "startLn": startLn,
-            "stopCol": col,
-            "stopLn": ln,
-            "elts": elts
-        } 
      }
 
      function stub(cx, node) {

@@ -1,4 +1,4 @@
-{ "tag": "Program", "id": "N10030", 
+{ "tag": "Program", "id": "N10043", 
   "body": [{ "tag": "ExprStmt", "id": "N10019", 
   "expr": { "tag": "InitExpr", "id": "N10018", 
   "target": 0
@@ -9,22 +9,28 @@
   "name": { "tag": "Name", "id": "N10013", 
   "ident": "x"}
 ,  "expr": { "tag": "LiteralInt", "id": "N10012", 
-  "intValue": 10}}]}}]
-,  "head": { "tag": "Head", "id": "N10009", 
-  "fixtures": [{ "tag": "Fixture", "id": "N10015", 
-  "name": { "tag": "Name", "id": "N10013", 
-  "ident": "x"}
-,  "data": { "tag": "ValFixture", "id": "N10014", 
-  "isReadOnly": false}},{ "tag": "Fixture", "id": "N10029", 
-  "name": { "tag": "Name", "id": "N10027", 
+  "intValue": 10}}]}},{ "tag": "ExprStmt", "id": "N10038", 
+  "expr": { "tag": "InitExpr", "id": "N10037", 
+  "target": 0
+,  "head": { "tag": "Head", "id": "N10036", 
+  "fixtures": []
+,  "exprs": []}
+,  "inits": [{ "tag": "InitBinding", "id": "N10035", 
+  "name": { "tag": "Name", "id": "N10032", 
   "ident": "f"}
-,  "data": { "tag": "MethodFixture", "id": "N10028", 
-  "func": { "tag": "Func", "id": "N10026", 
+,  "expr": { "tag": "LiteralFunction", "id": "N10031", 
+  "func": { "tag": "Func", "id": "N10030", 
   "name": { "tag": "FuncName", "id": "N10022", 
   "kind": 0
 ,  "ident": "f"}
-,  "body": [{ "tag": "ReturnStmt", "id": "N10025", 
-  "expr": { "tag": "Identifier", "id": "N10024", 
+,  "body": [{ "tag": "ExprStmt", "id": "N10027", 
+  "expr": { "tag": "SetExpr", "id": "N10026", 
+  "op": 0
+,  "le": { "tag": "Identifier", "id": "N10024", 
+  "ident": "x"}
+,  "re": { "tag": "LiteralInt", "id": "N10025", 
+  "intValue": 20}}},{ "tag": "ReturnStmt", "id": "N10029", 
+  "expr": { "tag": "Identifier", "id": "N10028", 
   "ident": "x"}}]
 ,  "params": { "tag": "Head", "id": "N10023", 
   "fixtures": []
@@ -48,12 +54,24 @@
 ,  "capture_result": false
 ,  "reify_activation": false}
 ,  "strict": false
-,  "pos": 0
-,  "filename": null}
-,  "ty": { "ast_constant": "Ast::specialTypes[0]" }
-,  "isReadOnly": true
-,  "isOverride": false
-,  "isFinal": false}}]
+,  "pos": 2
+,  "filename": "../test/t.js"}}}]}},{ "tag": "ExprStmt", "id": "N10042", 
+  "expr": { "tag": "SetExpr", "id": "N10041", 
+  "op": 0
+,  "le": { "tag": "Identifier", "id": "N10039", 
+  "ident": "x"}
+,  "re": { "tag": "LiteralInt", "id": "N10040", 
+  "intValue": 30}}}]
+,  "head": { "tag": "Head", "id": "N10009", 
+  "fixtures": [{ "tag": "Fixture", "id": "N10015", 
+  "name": { "tag": "Name", "id": "N10013", 
+  "ident": "x"}
+,  "data": { "tag": "ValFixture", "id": "N10014", 
+  "isReadOnly": false}},{ "tag": "Fixture", "id": "N10034", 
+  "name": { "tag": "Name", "id": "N10032", 
+  "ident": "f"}
+,  "data": { "tag": "ValFixture", "id": "N10033", 
+  "isReadOnly": false}}]
 ,  "exprs": []}
 ,  "attr": { "tag": "FuncAttr", "id": "N10011", 
   "uses_arguments": false

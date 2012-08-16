@@ -71,12 +71,15 @@ class Visitor {
             if (node.tag && isFunction(table[node.tag])) {
                 return table[node.tag](cx, node)
             }
+            else if (node.tag === void 0) {
+                return [ ]   // clean up stubs
+            }
             else {
-                throw "missing visitor method for " + node.tag                
+                throw "missing visitor method for tag " + node.tag                
             }
         }
 
-        throw "missing visitor method for " + node
+        return [ ]
     }
 
     function isArray(v) {
